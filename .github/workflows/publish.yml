@@ -1,0 +1,27 @@
+name: Release
+on:
+  workflow_run:
+    workflows: [Test Action]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup TypeScript environment
+        uses: ./
+        with:
+          pnpm-version: "7.11.0"
+          node-version: "18.8.0"
+      - name: Release
+        run: pnpm semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

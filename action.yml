@@ -1,0 +1,26 @@
+name: Lint GitHub Actions Workflows
+description: Lints the GitHub Actions Workflows files with actionlint.
+branding:
+  color: blue
+  icon: box
+
+inputs:
+  skip-checkout:
+    description: Skip the checkout step
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      if: inputs.skip-checkout != 'true'
+    - name: Download actionlint
+      id: get_actionlint
+      shell: bash
+      run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+    - name: Add Problem Matcher
+      run: echo "::add-matcher::.github/actionlint-matcher.json"
+    - name: Check workflow files
+      shell: bash
+      run: ${{ steps.get_actionlint.outputs.executable }} -color
