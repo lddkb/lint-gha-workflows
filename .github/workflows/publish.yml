@@ -8,6 +8,7 @@ on:
 jobs:
   release:
     name: Release
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -17,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Setup TypeScript environment
-        uses: ./
+        uses: lddkb/setup-ts-env@v1
         with:
           pnpm-version: "7.11.0"
           node-version: "18.8.0"
